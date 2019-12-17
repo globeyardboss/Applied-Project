@@ -3,49 +3,37 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
-from .models import customer
-from .models import booking
-#from .models import qualifications_on_entry
-#from .models import past_employees
-#from .models import employment_history
-#from .models import employee_degrees
-#from .models import countries
-
+from .models import personal_information
+from .models import internship_history
+from .models import qualifications_on_entry
+from .models import past_employees
+from .models import employment_history
+from .models import employee_degrees
+from .models import countries
 
 @csrf_exempt
 def new(request):
-
+   
     if request.method == 'POST':
-        new = customer()
+        new=personal_information()
         new.First_Name = request.POST.get('First_Name')
         new.Last_Name = request.POST.get('Last_Name')
-        new.Email = request.POST.get('Email')
-        new.HomeNumber = request.POST.get('HomeNumber')
-        new.MobileNumber = request.POST.get('MobileNumber')
-        new.save()
-
-        new = booking()
-        new.CID = request.POST.get('CID')
-        new.Number_Of_Showing = request.POST.get('Number_Of_Showing')
-        new.Text_Content = request.POST.get('Text_Content')
-        new.Air_Date = request.POST.get('Air_Date')
-        new.Date_Created = request.POST.get('Date_Created')
-        new.Recepient_Name = request.POST.get('Recepient_Name')
+        new.Other_Name = request.POST.get('Other_Name')
         new.save()
 
         context = {
             'First_Name': new.First_Name,
             'Last_Name': new.Last_Name,
-            'Email': new.Email,
-            'HomeNumber': new.HomeNumber,
-            'MobileNumber': new.MobileNumber
+            'Other_Name': new.Other_Name
         }
+        
 
         return render(request, 'database/new.html', {})
+    
 
     else:
         return render(request, 'database/new.html', {})
-
+        
 
 def home(request):
     return render(request, 'database/home.html', {})
@@ -55,22 +43,21 @@ def homex(request):
     return render(request, 'database/homex.html', {})
 
 
+
 def login(request):
     return render(request, 'database/login.html', {})
 
 
-
-
 def search(request):
-	Personal_Information = personal_information.objects.all()
-	if request.method == 'POST':
-		search_query = request.POST.get('search_item', '')      
-		Personal_Information = personal_information.objects.filter(First_Name__icontains= search_query).order_by('InternID') | personal_information.objects.filter(Last_Name__icontains= search_query).order_by('InternID')
-		return render(request, 'database/search.html', {'Personal_Information': Personal_Information})
+    Personal_Information = personal_information.objects.all()
+    if request.method == 'POST':
+      search_query = request.POST.get('search_item', '')      
+      Personal_Information = personal_information.objects.filter(First_Name__icontains= search_query).order_by('InternID') | personal_information.objects.filter(Last_Name__icontains= search_query).order_by('InternID')
+      return render(request, 'database/search.html', {'Personal_Information': Personal_Information})
 
-	else:
-		# return render(request, 'database/home.html', {})
-		return HttpResponse('Nothing to display')
+    else:
+         # return render(request, 'database/home.html', {})
+         return HttpResponse('Nothing to display')
 
 
 
@@ -304,4 +291,3 @@ def update_xemployee_countries(request, keyx, keyyx):
         output.Country_Name = request.POST.get('Countries')
         output.save()
         return HttpResponseRedirect('/database/edit_recordx/%s/' % keyyx)
-
